@@ -485,7 +485,6 @@ export function HomeTab({ userId, onTabChange, onStationSelect, onStationRequest
     <>
     <div
       ref={containerRef}
-      className="lg:pb-8"
       style={{ position: 'relative', overflowY: 'auto', overscrollBehaviorY: 'contain', height: '100%' }}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
@@ -567,7 +566,7 @@ export function HomeTab({ userId, onTabChange, onStationSelect, onStationRequest
         return (
           <button
             onClick={() => setShowOrderModal(true)}
-            className={`w-full mx-0 px-5 lg:px-0 mt-4 mb-4 text-left`}
+            className={`w-full px-5 mt-4 mb-3 text-left`}
           >
             <div className={`rounded-2xl card-shadow flex items-center gap-3 px-4 py-3 border-l-4 ${isReady ? 'bg-green-50 border-green-500' : 'bg-white border-[var(--color-orange)]'}`}>
               {/* Left: order number + station */}
@@ -659,7 +658,7 @@ export function HomeTab({ userId, onTabChange, onStationSelect, onStationRequest
       })()}
 
       {/* Greeting */}
-      <div className="px-5 lg:px-0 pt-4 mb-4">
+      <div className="px-5 pt-6 mb-3">
         <h2 className="text-2xl font-bold text-[var(--color-navy)]">{t(getGreetingKey(user?.name), { name: user?.name })}</h2>
         <p className="text-sm text-gray-500 mt-1">{t('home:subtitle')}</p>
       </div>
@@ -667,7 +666,7 @@ export function HomeTab({ userId, onTabChange, onStationSelect, onStationRequest
       {/* 3-stat row (Meal Swipes / Dining $ / Points) */}
       {loadingUser ? (
         <div
-          className="flex gap-3 overflow-x-auto px-5 lg:px-0 mb-6"
+          className="flex gap-3 overflow-x-auto px-5 mb-6"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
           {Array.from({ length: 3 }).map((_, i) => (
@@ -675,7 +674,7 @@ export function HomeTab({ userId, onTabChange, onStationSelect, onStationRequest
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-3 gap-2 px-5 lg:px-0 mb-6">
+        <div className="grid grid-cols-3 gap-2 px-5 mb-4">
           <div
             className="rounded-[12px] p-3 overflow-hidden relative"
             style={{
@@ -701,7 +700,7 @@ export function HomeTab({ userId, onTabChange, onStationSelect, onStationRequest
               <p
                 className="text-white leading-tight"
                 style={{
-                  fontSize: 28,
+                  fontSize: 22,
                   fontWeight: 700,
                   textShadow: '0 2px 6px rgba(0,0,0,0.6)',
                 }}
@@ -735,7 +734,7 @@ export function HomeTab({ userId, onTabChange, onStationSelect, onStationRequest
               <p
                 className="text-white leading-tight"
                 style={{
-                  fontSize: 28,
+                  fontSize: 22,
                   fontWeight: 700,
                   textShadow: '0 2px 6px rgba(0,0,0,0.6)',
                 }}
@@ -770,7 +769,7 @@ export function HomeTab({ userId, onTabChange, onStationSelect, onStationRequest
               <p
                 className="text-white leading-tight"
                 style={{
-                  fontSize: 28,
+                  fontSize: 22,
                   fontWeight: 700,
                   textShadow: '0 2px 6px rgba(0,0,0,0.6)',
                 }}
@@ -783,7 +782,7 @@ export function HomeTab({ userId, onTabChange, onStationSelect, onStationRequest
       )}
 
       {/* Coffee milestone strip */}
-      <div className="px-5 lg:px-0 mb-5">
+      <div className="px-5 mb-4">
         <button
           onClick={() => onTabChange('rewards')}
           className="w-full bg-white rounded-[12px] px-4 py-3 card-shadow flex items-center justify-between active:scale-[0.98] transition-transform"
@@ -843,7 +842,7 @@ export function HomeTab({ userId, onTabChange, onStationSelect, onStationRequest
 
       {/* Falcon Founder Welcome Week Challenge */}
       {SHOW_WELCOME_CHALLENGE && !welcomeCardDismissed && (
-        <div className="px-5 lg:px-0 mb-5">
+        <div className="px-5 mb-4">
           <WelcomeWeekCard
             foundingFalconBadge={foundingFalconBadge}
             welcomeStationsVisited={welcomeStationsVisited}
@@ -867,7 +866,7 @@ export function HomeTab({ userId, onTabChange, onStationSelect, onStationRequest
         if (!showCard || !planCardData || planCardDismissed) return null;
 
         return (
-          <div className="px-5 lg:px-0 mb-5">
+          <div className="px-5 mb-4">
             <PlanRecommendationCard
               userId={userId}
               planCardData={planCardData}
@@ -880,7 +879,7 @@ export function HomeTab({ userId, onTabChange, onStationSelect, onStationRequest
 
       {/* Order Again */}
       {!loadingRecentOrders && recentOrderItems.length > 0 && (
-        <div className="px-5 lg:px-0 mb-6">
+        <div className="px-5 mb-4">
           <h3 className="text-xl font-bold text-[var(--color-navy)]">{t('home:orderAgain')}</h3>
           <p className="text-xs text-gray-400 mt-0.5 mb-3">{t('home:orderAgainSubtitle')}</p>
           <div
@@ -911,7 +910,7 @@ export function HomeTab({ userId, onTabChange, onStationSelect, onStationRequest
       )}
 
       {/* What's Open Now */}
-      <div className="px-5 lg:px-0 mb-8">
+      <div className="px-5 mb-5">
         <h3 className="text-xl font-bold text-[var(--color-navy)] mb-3">{t('home:whatsOpenNow')}</h3>
         {loadingStations ? (
           <div className="space-y-2">
@@ -1022,7 +1021,7 @@ export function HomeTab({ userId, onTabChange, onStationSelect, onStationRequest
       </div>
 
       {/* Today's Special */}
-      <div className="px-5 lg:px-0 mb-8">
+      <div className="px-5 mb-5">
         <h3 className="text-xl font-bold text-[var(--color-navy)] mb-3">{t('home:todaysSpecial')}</h3>
         {loadingFeatured ? (
           <div className="w-full h-[200px] rounded-[18px] bg-gray-200 animate-pulse" />
@@ -1102,7 +1101,7 @@ export function HomeTab({ userId, onTabChange, onStationSelect, onStationRequest
 
       {/* Coming Up */}
       {upcomingEvents.length > 0 && (
-        <div className="px-5 lg:px-0 mb-8">
+        <div className="px-5 mb-5">
           <h3 className="text-xl font-bold text-[var(--color-navy)] mb-3">{t('home:comingUp')}</h3>
           <div className="space-y-2">
             {upcomingEvents.map((event, index) => (
@@ -1165,7 +1164,7 @@ export function HomeTab({ userId, onTabChange, onStationSelect, onStationRequest
       )}
 
       {/* Popular Today */}
-      <div className="px-5 lg:px-0 pr-4 mb-8 lg:max-w-md lg:mx-auto">
+      <div className="px-5 pr-4 mb-5">
         <h3 className="text-xl font-bold text-[var(--color-navy)] mb-4">{t('home:popularToday')}</h3>
         {topSellers.length === 0 ? (
           <div className="space-y-3">
