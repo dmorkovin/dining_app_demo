@@ -412,9 +412,16 @@ export function VoteTab({ userId, onSendSmile }: VoteTabProps) {
                         <span className="text-xs font-semibold text-[var(--color-orange)] uppercase tracking-wide">
                           {currentItem.category}
                         </span>
-                        <h3 className="text-xl font-bold text-[var(--color-navy)] mt-1">
-                          {currentItem.name}
-                        </h3>
+                        <div className="flex items-baseline justify-between mt-1">
+                          <h3 className="text-xl font-bold text-[var(--color-navy)]">
+                            {currentItem.name}
+                          </h3>
+                          {currentItem.price != null && (
+                            <span className="text-lg font-bold text-[var(--color-orange)] ml-3 flex-shrink-0">
+                              ${Number(currentItem.price).toFixed(2)}
+                            </span>
+                          )}
+                        </div>
                         <p className="text-sm text-gray-600 mt-2 leading-relaxed">
                           {currentItem.description}
                         </p>

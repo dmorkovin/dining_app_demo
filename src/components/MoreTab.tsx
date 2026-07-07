@@ -30,6 +30,7 @@ interface OrderRow {
   status: string;
   created_at: string;
   stations: { name: string } | null;
+  order_items: { quantity: number; menu_items: { price: number | null } | null }[] | null;
 }
 
 const STATUS_STYLES: Record<string, { key: string; className: string }> = {
@@ -127,7 +128,7 @@ export function ProfileTab({ userId }: ProfileTabProps) {
   const fetchOrders = async () => {
     const { data, error } = await supabase
       .from('orders')
-      .select('*, stations(name)')
+      .select('*, stations(name), order_items(quantity, menu_items(price))')
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
       .limit(3);
@@ -316,6 +317,9 @@ export function ProfileTab({ userId }: ProfileTabProps) {
             <div className="grid gap-3">
               {orders.map((order) => {
                 const status = STATUS_STYLES[order.status] || STATUS_STYLES.pending;
+                const orderTotal = order.order_items
+                  ?.reduce((sum, oi) => sum + (Number(oi.menu_items?.price ?? 0) * oi.quantity), 0) ?? 0;
+                const hasPrice = order.order_items?.some(oi => oi.menu_items?.price != null) ?? false;
                 return (
                   <div key={order.id} className="bg-white rounded-[14px] p-4 card-shadow">
                     <div className="flex items-center justify-between">
@@ -328,6 +332,7 @@ export function ProfileTab({ userId }: ProfileTabProps) {
                         </p>
                         <p className="text-xs text-gray-400 mt-1">
                           {formatOrderDate(order.created_at, t('today'), i18n.language)}
+                          {hasPrice ? ` · $${orderTotal.toFixed(2)}` : ''}
                         </p>
                       </div>
                       <span

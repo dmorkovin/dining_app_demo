@@ -77,6 +77,7 @@ export interface Database {
           sold_count: number | null;
           station_id: number | null;
           created_at: string | null;
+          price: number | null;
         };
         Insert: {
           id?: string;
@@ -94,6 +95,7 @@ export interface Database {
           sold_count?: number | null;
           station_id?: number | null;
           created_at?: string | null;
+          price?: number | null;
         };
         Update: {
           id?: string;
@@ -111,6 +113,7 @@ export interface Database {
           sold_count?: number | null;
           station_id?: number | null;
           created_at?: string | null;
+          price?: number | null;
         };
       };
       user_swipes: {

@@ -753,7 +753,7 @@ export function OrderTab({ userId, onTabChange, initialStationId, initialItemId,
                             {item.name}
                           </h3>
                           <p className="text-xs text-gray-500 mt-1">
-                            {item.calories} cal
+                            {item.calories} cal{item.price != null ? ` · $${Number(item.price).toFixed(2)}` : ''}
                           </p>
                           <div className="mt-auto pt-2 flex items-center justify-between gap-2">
                             {firstTag ? (
@@ -1169,6 +1169,7 @@ export function OrderTab({ userId, onTabChange, initialStationId, initialItemId,
                         </p>
                         <p className="text-xs text-gray-500 mt-0.5">
                           {ci.menuItem.calories} cal
+                          {ci.menuItem.price != null ? ` · $${(Number(ci.menuItem.price) * ci.quantity).toFixed(2)}` : ''}
                         </p>
                       </div>
                       <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-full px-1.5 py-1">
@@ -1197,6 +1198,14 @@ export function OrderTab({ userId, onTabChange, initialStationId, initialItemId,
             </div>
 
             <div className="px-5 pt-4 border-t border-gray-100 bg-white" style={{ paddingBottom: '16px' }}>
+              {cart.length > 0 && cart.some(ci => ci.menuItem.price != null) && (
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-sm text-gray-500">Subtotal</span>
+                  <span className="text-sm font-bold text-gray-900">
+                    ${cart.reduce((sum, ci) => sum + (Number(ci.menuItem.price ?? 0) * ci.quantity), 0).toFixed(2)}
+                  </span>
+                </div>
+              )}
               <button
                 onClick={placeOrder}
                 disabled={
@@ -1273,11 +1282,21 @@ export function OrderTab({ userId, onTabChange, initialStationId, initialItemId,
                         {ci.menuItem.name}
                       </span>
                       <span className="font-semibold text-gray-900 flex-shrink-0">
-                        x{ci.quantity}
+                        {ci.menuItem.price != null
+                          ? `$${(Number(ci.menuItem.price) * ci.quantity).toFixed(2)}`
+                          : `x${ci.quantity}`}
                       </span>
                     </li>
                   ))}
                 </ul>
+                {confirmedItems.some(ci => ci.menuItem.price != null) && (
+                  <div className="flex items-center justify-between text-sm mt-3 pt-3 border-t border-gray-200">
+                    <span className="font-semibold text-gray-700">Total</span>
+                    <span className="font-bold text-gray-900">
+                      ${confirmedItems.reduce((sum, ci) => sum + (Number(ci.menuItem.price ?? 0) * ci.quantity), 0).toFixed(2)}
+                    </span>
+                  </div>
+                )}
               </div>
             )}
 

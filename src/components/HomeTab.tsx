@@ -1059,6 +1059,11 @@ export function HomeTab({ userId, onTabChange, onStationSelect, onStationRequest
                                 {item.calories} cal
                               </span>
                             )}
+                            {item.price != null && (
+                              <span className="bg-white/20 backdrop-blur-sm text-white text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
+                                ${Number(item.price).toFixed(2)}
+                              </span>
+                            )}
                             {Array.isArray(item.tags) && (item.tags as string[]).filter(t => !SUPPRESSED_TAGS.includes(t)).length > 0 && (
                               <span className="bg-white/20 backdrop-blur-sm text-white text-[11px] font-semibold px-2.5 py-0.5 rounded-full capitalize">
                                 {(item.tags as string[]).filter(t => !SUPPRESSED_TAGS.includes(t))[0]}
@@ -1205,7 +1210,12 @@ export function HomeTab({ userId, onTabChange, onStationSelect, onStationRequest
                     alt={item.name}
                     className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
                   />
-                  <h4 className="flex-1 text-sm font-semibold text-[var(--color-navy)]">{item.name}</h4>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-sm font-semibold text-[var(--color-navy)] truncate">{item.name}</h4>
+                    {item.price != null && (
+                      <p className="text-xs text-gray-500 mt-0.5">${Number(item.price).toFixed(2)}</p>
+                    )}
+                  </div>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
