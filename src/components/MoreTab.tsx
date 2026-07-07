@@ -75,6 +75,7 @@ export function ProfileTab({ userId }: ProfileTabProps) {
   const [dietaryPreferences, setDietaryPreferences] = useState<string[]>([]);
   const [hideAllergenItems, setHideAllergenItems] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [showAllOrders, setShowAllOrders] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
@@ -130,8 +131,7 @@ export function ProfileTab({ userId }: ProfileTabProps) {
       .from('orders')
       .select('*, stations(name), order_items(quantity, menu_items(price))')
       .eq('user_id', userId)
-      .order('created_at', { ascending: false })
-      .limit(3);
+      .order('created_at', { ascending: false });
     if (error) console.error('Error fetching orders:', error);
     if (data) setOrders(data as unknown as OrderRow[]);
   };
@@ -315,7 +315,7 @@ export function ProfileTab({ userId }: ProfileTabProps) {
             </div>
           ) : (
             <div className="grid gap-3">
-              {orders.map((order) => {
+              {(showAllOrders ? orders : orders.slice(0, 5)).map((order) => {
                 const status = STATUS_STYLES[order.status] || STATUS_STYLES.pending;
                 const orderTotal = order.order_items
                   ?.reduce((sum, oi) => sum + (Number(oi.menu_items?.price ?? 0) * oi.quantity), 0) ?? 0;
@@ -344,6 +344,14 @@ export function ProfileTab({ userId }: ProfileTabProps) {
                   </div>
                 );
               })}
+              {orders.length > 5 && (
+                <button
+                  onClick={() => setShowAllOrders(v => !v)}
+                  className="w-full flex items-center justify-center px-4 py-3 text-sm font-medium text-[var(--color-navy)] bg-white rounded-[14px] card-shadow hover:bg-gray-50 transition-colors"
+                >
+                  {showAllOrders ? 'Show less' : `Show more (${orders.length - 5})`}
+                </button>
+              )}
             </div>
           )}
         </div>
