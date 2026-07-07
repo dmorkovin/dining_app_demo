@@ -263,9 +263,20 @@ function AppContent() {
   }
 
   return (
-    <div className="bg-[#F7F8FA] overflow-hidden" style={{ display: 'grid', gridTemplateRows: 'auto 1fr auto', height: '100dvh', width: '100vw' }}>
-      <div className="max-w-[430px] lg:max-w-none mx-auto bg-white lg:bg-transparent h-screen relative overflow-hidden" style={{ maxWidth: '100vw' }}>
-        {(() => {
+    <div
+      className="bg-[#F7F8FA] overflow-hidden"
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: '50%',
+        transform: 'translateX(-50%)',
+        width: '430px',
+        maxWidth: '100vw',
+        height: '100dvh',
+        boxShadow: '0 0 0 1px rgba(0,0,0,0.08), 0 32px 80px rgba(0,0,0,0.45)',
+      }}
+    >
+      {(() => {
           const headerKeys: Record<string, { title: string; tagline: string }> = {
             home:     { title: t('header.homeTitle'), tagline: t('header.homeTagline') },
             order:    { title: t('header.orderTitle'), tagline: t('header.orderTagline') },
@@ -288,29 +299,9 @@ function AppContent() {
           );
         })()}
 
-        <main className="lg:pt-0 lg:flex lg:max-w-[1400px] lg:mx-auto lg:gap-6 lg:px-6 lg:pl-32">
-          {/* Desktop Left Sidebar - Icon Only */}
-          <aside className="hidden lg:flex lg:flex-col lg:items-center lg:w-20 lg:flex-shrink-0 lg:sticky lg:top-20 lg:self-start lg:pt-6">
-            <div className="space-y-1">
-              {sidebarTabDefs.map(({ id, key, Icon }) => (
-                <button
-                  key={id}
-                  onClick={() => { haptic.selection(); setActiveTab(id); }}
-                  title={t(key)}
-                  className={`w-12 h-12 flex items-center justify-center rounded-[14px] transition-all ${
-                    activeTab === id
-                      ? 'bg-[var(--color-orange)] text-white'
-                      : 'text-gray-600 hover:bg-gray-100'
-                  }`}
-                >
-                  <Icon className="w-6 h-6" />
-                </button>
-              ))}
-            </div>
-          </aside>
-
+        <main>
           {/* Main Content */}
-          <div className="flex-1 lg:min-h-screen lg:bg-white lg:rounded-[14px] lg:shadow-sm lg:max-w-2xl lg:px-6" style={{ position: 'relative', height: 'calc(100dvh - 50px - 49px - env(safe-area-inset-top) - env(safe-area-inset-bottom))', marginTop: 'calc(50px + env(safe-area-inset-top))', marginBottom: 'calc(49px + env(safe-area-inset-bottom))', overflow: 'hidden' }}>
+          <div style={{ position: 'relative', height: 'calc(100dvh - 50px - 49px - env(safe-area-inset-top) - env(safe-area-inset-bottom))', marginTop: 'calc(50px + env(safe-area-inset-top))', marginBottom: 'calc(49px + env(safe-area-inset-bottom))', overflow: 'hidden' }}>
             {activeTab === 'home' && (
               <HomeTab
                 userId={effectiveUserId}
@@ -344,11 +335,6 @@ function AppContent() {
               <MoreTab userId={effectiveUserId} onSendSmile={handleSendSmile} />
             )}
           </div>
-
-          {/* Desktop Right Sidebar */}
-          <aside className="hidden lg:block lg:w-80 lg:flex-shrink-0 lg:sticky lg:top-20 lg:self-start lg:pt-6">
-            <RightSidebar activeTab={activeTab} onTabChange={setActiveTab} />
-          </aside>
         </main>
 
         {cartItems.length > 0 && (
@@ -432,7 +418,6 @@ function AppContent() {
             </div>
           </div>
         )}
-      </div>
     </div>
   );
 }
