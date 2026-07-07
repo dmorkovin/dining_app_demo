@@ -1,0 +1,18 @@
+<svg viewBox="0 0 300 120" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .station-name { fill: #1565c0; font-family: 'Arial Black', sans-serif; font-weight: 900; font-size: 52px; }
+      .tagline { fill: #1976d2; font-family: Arial, sans-serif; font-size: 12px; font-weight: 600; }
+      .check { fill: #1565c0; }
+    </style>
+  </defs>
+
+  <!-- Checkmark icon in the M -->
+  <path class="check" d="M185,40 L190,48 L200,32" stroke="#1565c0" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- SIMPLY text -->
+  <text x="10" y="65" class="station-name">SIMPLY</text>
+
+  <!-- Tagline -->
+  <text x="10" y="85" class="tagline">ALLERGEN-FRIENDLY KITCHEN</text>
+</svg>

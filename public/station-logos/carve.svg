@@ -1,0 +1,18 @@
+<svg viewBox="0 0 300 120" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .station-name { fill: #3e2723; font-family: 'Arial Black', sans-serif; font-weight: 900; font-size: 52px; }
+      .tagline { fill: #8d6e63; font-family: Arial, sans-serif; font-size: 12px; font-weight: 600; }
+      .knife { fill: #5d4037; }
+    </style>
+  </defs>
+
+  <!-- Knife icon in the A -->
+  <path class="knife" d="M95,30 L95,60 L92,60 L92,30 L95,30 M93.5,25 L93.5,30 M93.5,60 L93.5,65" />
+
+  <!-- CARVE text -->
+  <text x="10" y="65" class="station-name">CARVE</text>
+
+  <!-- Tagline -->
+  <text x="10" y="85" class="tagline">CRAFT SANDWICHES</text>
+</svg>

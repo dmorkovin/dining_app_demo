@@ -1,0 +1,126 @@
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&family=Fraunces:wght@700;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.auth-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.auth-input:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+@layer base {
+  :root {
+    --sat: env(safe-area-inset-top);
+    --sar: env(safe-area-inset-right);
+    --sab: env(safe-area-inset-bottom);
+    --sal: env(safe-area-inset-left);
+    --color-navy: #1B2838;
+    --color-orange: #FF6B35;
+    --color-teal: #1A9B8F;
+  }
+
+  body {
+    font-family: 'Josefin Sans', sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background-color: #164a31;
+    background-image: url('/assets/background.png');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    overflow-x: hidden;
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
+    font-family: 'Josefin Sans', system-ui, sans-serif;
+  }
+
+  html {
+    overflow-x: hidden;
+    background-color: #164a31;
+  }
+
+  #root {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background-color: transparent;
+  }
+}
+
+@layer utilities {
+  .font-serif {
+    font-family: 'Fraunces', serif;
+  }
+
+  .animate-shimmer {
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 3s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  .animate-pulse-slow {
+    animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulse-slow {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .transition-smooth {
+    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .card-shadow {
+    box-shadow: 0 4px 12px rgba(27, 40, 56, 0.08);
+  }
+
+  .card-shadow-lg {
+    box-shadow: 0 8px 24px rgba(27, 40, 56, 0.12);
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+}
+
+.tab-active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  position: relative;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.tab-inactive {
+  opacity: 0;
+  transform: translateY(6px);
+  pointer-events: none;
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  width: 100%;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.sheet-enter {
+  animation: sheetUp 0.3s ease forwards;
+}
+@keyframes sheetUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.animate-slideUp {
+  animation: sheetUp 0.3s ease forwards;
+}

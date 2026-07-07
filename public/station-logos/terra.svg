@@ -1,0 +1,18 @@
+<svg viewBox="0 0 300 120" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .station-name { fill: #8d6e63; font-family: 'Arial Black', sans-serif; font-weight: 900; font-size: 52px; }
+      .tagline { fill: #6d4c41; font-family: Arial, sans-serif; font-size: 12px; font-weight: 600; }
+      .waves { fill: #8d6e63; }
+    </style>
+  </defs>
+
+  <!-- Wave pattern in first E -->
+  <path class="waves" d="M70,45 Q73,42 76,45 Q79,48 82,45" stroke="#8d6e63" stroke-width="2" fill="none"/>
+
+  <!-- TERRA text -->
+  <text x="10" y="65" class="station-name">TERRA</text>
+
+  <!-- Tagline -->
+  <text x="10" y="85" class="tagline">GLOBAL KITCHEN</text>
+</svg>

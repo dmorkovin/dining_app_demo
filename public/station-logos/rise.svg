@@ -1,0 +1,18 @@
+<svg viewBox="0 0 280 120" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .station-name { fill: #c9a961; font-family: 'Arial Black', sans-serif; font-weight: 900; font-size: 52px; }
+      .tagline { fill: #8d6e63; font-family: Arial, sans-serif; font-size: 12px; font-weight: 600; }
+      .wheat { fill: #c9a961; }
+    </style>
+  </defs>
+
+  <!-- Wheat icon in the I -->
+  <path class="wheat" d="M85,25 L85,50 M82,30 L88,30 M82,35 L88,35 M82,40 L88,40 M82,45 L88,45" stroke="#c9a961" stroke-width="1.5" fill="none"/>
+
+  <!-- RISE text -->
+  <text x="10" y="65" class="station-name">RISE</text>
+
+  <!-- Tagline -->
+  <text x="10" y="85" class="tagline">ARTISAN BAKERY</text>
+</svg>

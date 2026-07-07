@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Today's Specials — Genuine Dining</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --orange: #EE5E29;
+      --dark: #1a1a1a;
+      --white: #ffffff;
+      --text-primary: #1a1a1a;
+      --text-secondary: #6b6b6b;
+      --border: #e5e5e5;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Lato', sans-serif;
+      background: var(--white);
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+
+    .section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 2rem;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .section-title {
+      font-family: 'Lato', sans-serif;
+      font-weight: 700;
+      font-style: normal;
+      font-size: clamp(2rem, 5vw, 64px);
+      color: #e35205;
+      line-height: 116%;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-subtitle {
+      font-family: 'Lato', sans-serif;
+      font-size: 18px;
+      line-height: 128%;
+      color: var(--text-secondary);
+      font-weight: 400;
+      max-width: 550px;
+      margin: 0 auto;
+    }
+
+    /* ═══════════ CAROUSEL ═══════════ */
+    .carousel-wrapper {
+      position: relative;
+    }
+
+    .carousel-track {
+      display: flex;
+      gap: 1.5rem;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      padding: 0.5rem 0 1.5rem;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .carousel-track::-webkit-scrollbar { display: none; }
+
+    /* ═══════════ ARROWS ═══════════ */
+    .carousel-arrow {
+      display: none;
+      position: absolute;
+      top: 45%;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--white);
+      cursor: pointer;
+      z-index: 10;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      transition: all 0.2s ease;
+      font-size: 1.1rem;
+      color: var(--text-primary);
+    }
+
+    .carousel-arrow:hover {
+      border-color: var(--orange);
+      color: var(--orange);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+    }
+
+    .arrow-left { left: -22px; }
+    .arrow-right { right: -22px; }
+
+    @media (min-width: 769px) {
+      .carousel-arrow { display: flex; }
+      .section { padding-left: 3rem; padding-right: 3rem; }
+    }
+
+    /* ═══════════ DOTS ═══════════ */
+    .carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      padding-bottom: 0.5rem;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--border);
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      padding: 0;
+    }
+
+    .dot.active {
+      background: var(--orange);
+      width: 24px;
+      border-radius: 4px;
+    }
+
+    /* ═══════════ CARDS ═══════════ */
+    .special-card {
+      flex: 0 0 calc(33.333% - 1rem);
+      scroll-snap-align: start;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    @media (max-width: 1024px) {
+      .special-card { flex: 0 0 calc(50% - 0.75rem); }
+    }
+
+    @media (max-width: 640px) {
+      .special-card { flex: 0 0 85%; }
+      .carousel-track { gap: 1rem; }
+    }
+
+    .card-badge {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--border);
+      border-bottom: none;
+      border-radius: 8px 8px 0 0;
+      background: var(--white);
+    }
+
+    .card-image-wrap {
+      background: var(--orange);
+      border-radius: 0 0 16px 16px;
+      padding: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
+    }
+
+    .card-image-wrap img {
+      width: 85%;
+      height: 85%;
+      object-fit: cover;
+      border-radius: 12px;
+    }
+
+    .card-info {
+      padding: 1rem 0.25rem;
+      text-align: center;
+    }
+
+    .card-name {
+      font-family: 'Lato', sans-serif;
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: var(--orange);
+      margin-bottom: 0.4rem;
+      line-height: 1.3;
+    }
+
+    .card-desc {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    /* ═══════════ STATES ═══════════ */
+    .state-msg {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: var(--text-secondary);
+    }
+
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid var(--border);
+      border-top-color: var(--orange);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto 0.75rem;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .fade-in { animation: fadeUp 0.4s ease both; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="section">
+  <div class="section-header">
+    <h2 class="section-title">What's on the<br>Menu Today</h2>
+    <p class="section-subtitle">Scratch-made, fresh ingredients, prepared daily by our culinary team.</p>
+  </div>
+
+  <div id="specialsContent">
+    <div class="state-msg">
+      <div class="spinner"></div>
+      <p>Loading specials&hellip;</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  const SUPABASE_URL = 'https://lrclciudpwarqqtiwgxl.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxyY2xjaXVkcHdhcnFxdGl3Z3hsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyNDczNjUsImV4cCI6MjA5MDgyMzM2NX0.X3AEiowB4DuWAPgQwn1UQRJqmidh0PnCyCsI3EkBavo';
+
+  const $content = document.getElementById('specialsContent');
+
+  async function supaFetch(table, query = '') {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${query}`, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+      }
+    });
+    if (!res.ok) throw new Error(`Failed to fetch ${table}: ${res.status}`);
+    return res.json();
+  }
+
+  async function init() {
+    try {
+      const [offers, items, stations] = await Promise.all([
+        supaFetch('limited_time_offers', 'select=*&order=vote_count.desc'),
+        supaFetch('menu_items', 'select=*'),
+        supaFetch('stations', 'select=id,name&is_active=eq.true'),
+      ]);
+
+      const itemMap = {};
+      items.forEach(i => { itemMap[i.id] = i; });
+      const stationMap = {};
+      stations.forEach(s => { stationMap[s.id] = s.name; });
+
+      const specials = offers
+        .map(o => {
+          const item = itemMap[o.menu_item_id];
+          if (!item) return null;
+          return { ...item, days_remaining: o.days_remaining, vote_count: o.vote_count };
+        })
+        .filter(Boolean);
+
+      if (!specials.length) {
+        $content.innerHTML = '<div class="state-msg"><p>No specials today — check back soon!</p></div>';
+        sendHeight();
+        return;
+      }
+
+      let cardsHtml = '';
+      specials.forEach((item, i) => {
+        const stationName = stationMap[item.station_id] || 'Campus Dining';
+        cardsHtml += renderCard(item, stationName, i);
+      });
+
+      let dotsHtml = '';
+      specials.forEach((_, i) => {
+        dotsHtml += `<button class="dot ${i === 0 ? 'active' : ''}" data-index="${i}"></button>`;
+      });
+
+      $content.innerHTML = `
+        <div class="carousel-wrapper">
+          <button class="carousel-arrow arrow-left" id="arrowLeft">&#8249;</button>
+          <button class="carousel-arrow arrow-right" id="arrowRight">&#8250;</button>
+          <div class="carousel-track" id="carouselTrack">${cardsHtml}</div>
+        </div>
+        <div class="carousel-dots" id="carouselDots">${dotsHtml}</div>`;
+
+      initCarousel(specials.length);
+      sendHeight();
+    } catch (err) {
+      console.error(err);
+      $content.innerHTML = '<div class="state-msg"><p>Couldn\'t load specials right now.</p></div>';
+      sendHeight();
+    }
+  }
+
+  function renderCard(item, stationName, index) {
+    const img = item.image_url
+      ? `<img src="${esc(item.image_url)}" alt="${esc(item.name)}" loading="lazy">`
+      : '';
+
+    return `
+      <div class="special-card fade-in" style="animation-delay:${index * 0.1}s">
+        <div class="card-badge">${esc(stationName)}</div>
+        <div class="card-image-wrap">${img}</div>
+        <div class="card-info">
+          <div class="card-name">${esc(item.name)}</div>
+          <p class="card-desc">${esc(item.description)}</p>
+        </div>
+      </div>`;
+  }
+
+  function initCarousel(count) {
+    const track = document.getElementById('carouselTrack');
+    const dots = document.querySelectorAll('.dot');
+    const leftBtn = document.getElementById('arrowLeft');
+    const rightBtn = document.getElementById('arrowRight');
+
+    function getCardWidth() {
+      const card = track.querySelector('.special-card');
+      if (!card) return 300;
+      const style = getComputedStyle(track);
+      const gap = parseFloat(style.gap) || 0;
+      return card.offsetWidth + gap;
+    }
+
+    function updateDots() {
+      const cardWidth = getCardWidth();
+      const scrollPos = track.scrollLeft;
+      const activeIndex = Math.round(scrollPos / cardWidth);
+      dots.forEach((d, i) => d.classList.toggle('active', i === activeIndex));
+    }
+
+    leftBtn.addEventListener('click', () => {
+      track.scrollBy({ left: -getCardWidth(), behavior: 'smooth' });
+    });
+
+    rightBtn.addEventListener('click', () => {
+      track.scrollBy({ left: getCardWidth(), behavior: 'smooth' });
+    });
+
+    dots.forEach(dot => {
+      dot.addEventListener('click', () => {
+        const idx = Number(dot.dataset.index);
+        track.scrollTo({ left: idx * getCardWidth(), behavior: 'smooth' });
+      });
+    });
+
+    track.addEventListener('scroll', updateDots);
+  }
+
+  function esc(str) {
+    if (!str) return '';
+    const d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
+
+  function sendHeight() {
+    setTimeout(() => {
+      const h = document.documentElement.scrollHeight;
+      window.parent.postMessage({ type: 'resize-specials', height: h }, '*');
+    }, 600);
+  }
+
+  window.addEventListener('resize', sendHeight);
+
+  init();
+</script>
+
+</body>
+</html>

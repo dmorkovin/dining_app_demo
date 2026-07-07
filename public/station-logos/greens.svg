@@ -1,0 +1,18 @@
+<svg viewBox="0 0 300 120" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .station-name { fill: #1a4d2e; font-family: 'Arial Black', sans-serif; font-weight: 900; font-size: 52px; }
+      .tagline { fill: #4a7c59; font-family: Arial, sans-serif; font-size: 12px; font-weight: 600; }
+      .leaf { fill: #8bc34a; }
+    </style>
+  </defs>
+
+  <!-- Leaf icon in the R -->
+  <path class="leaf" d="M105,35 Q108,28 115,28 Q122,28 125,35 Q125,42 118,47 Q115,42 112,42 Q109,42 106,47 Q105,42 105,35 Z" />
+
+  <!-- GREENS text -->
+  <text x="10" y="65" class="station-name">GREENS</text>
+
+  <!-- Tagline -->
+  <text x="10" y="85" class="tagline">FRESH SALADS &amp; BOWLS</text>
+</svg>

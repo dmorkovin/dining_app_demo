@@ -1,0 +1,18 @@
+<svg viewBox="0 0 300 120" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .station-name { fill: #0d5f47; font-family: 'Arial Black', sans-serif; font-weight: 900; font-size: 52px; }
+      .tagline { fill: #f9a825; font-family: Arial, sans-serif; font-size: 12px; font-weight: 600; }
+      .steam { fill: #f9a825; }
+    </style>
+  </defs>
+
+  <!-- Steam icon above first M -->
+  <path class="steam" d="M185,25 Q187,20 189,25 M193,25 Q195,20 197,25" />
+
+  <!-- SIMMER text -->
+  <text x="10" y="65" class="station-name">SIMMER</text>
+
+  <!-- Tagline -->
+  <text x="10" y="85" class="tagline">SOUPS &amp; STEWS</text>
+</svg>

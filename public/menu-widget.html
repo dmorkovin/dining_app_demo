@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Menus — Genuine Dining at UTPB</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --orange: #EE5E29;
+      --dark: #1a1a1a;
+      --dark-green: #1a3c2a;
+      --green: #2d6a4f;
+      --white: #ffffff;
+      --cream: #faf7f2;
+      --text-primary: #1a1a1a;
+      --text-secondary: #6b6b6b;
+      --text-on-dark-muted: rgba(255,255,255,0.6);
+      --border: #e5e5e5;
+      --tag-green-bg: #eef6f0;
+      --tag-green-text: #2d6a4f;
+      --tag-orange-bg: #fff3ed;
+      --tag-orange-text: #c44d1a;
+      --radius: 16px;
+      --radius-pill: 100px;
+      --open-green: #16a34a;
+      --closed-red: #dc2626;
+      --sidebar-width: 220px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Lato', sans-serif;
+      background: var(--white);
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ═══════════ HERO ═══════════ */
+    .hero {
+      background: var(--orange);
+      padding: 4rem 2rem 3.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 40%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                  radial-gradient(circle at 70% 60%, rgba(0,0,0,0.06) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 800;
+      font-size: clamp(2rem, 5vw, 3rem);
+      color: var(--white);
+      line-height: 1.1;
+      position: relative;
+    }
+    .hero p {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.85);
+      margin-top: 0.75rem;
+      font-weight: 400;
+      position: relative;
+    }
+
+    /* ═══════════ MAIN LAYOUT ═══════════ */
+    .main-layout {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* ═══════════ MOBILE: HORIZONTAL TABS ON TOP ═══════════ */
+    .station-bar-mobile {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+    }
+    .station-bar-mobile-inner {
+      padding: 0.75rem 1rem;
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .station-bar-mobile-inner::-webkit-scrollbar { display: none; }
+
+    /* ═══════════ DESKTOP: SIDEBAR LEFT ═══════════ */
+    .station-sidebar {
+      display: none;
+    }
+
+    .content-area {
+      flex: 1;
+      min-width: 0;
+    }
+
+    @media (min-width: 769px) {
+      .station-bar-mobile { display: none; }
+
+      .station-sidebar {
+        display: block;
+        width: var(--sidebar-width);
+        flex-shrink: 0;
+        position: sticky;
+        top: 2rem;
+        align-self: flex-start;
+        padding-top: 2rem;
+      }
+
+      .main-layout {
+        display: flex;
+        gap: 2.5rem;
+        padding-top: 0;
+      }
+
+      .content-area {
+        padding-top: 0;
+      }
+    }
+
+    /* ═══════════ SIDEBAR NAV ITEMS ═══════════ */
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.6rem 0.75rem;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+      background: transparent;
+      text-align: left;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--dark-green);
+      width: 100%;
+      outline: none;
+    }
+    .sidebar-item:hover {
+      background: rgba(45, 106, 79, 0.08);
+    }
+    .sidebar-item.active {
+      background: rgba(45, 106, 79, 0.1);
+      color: var(--dark-green);
+    }
+    .sidebar-logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: contain;
+      background: var(--white);
+      flex-shrink: 0;
+      border: 1px solid var(--border);
+    }
+    .sidebar-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--white);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    /* ═══════════ MOBILE TAB PILLS ═══════════ */
+    .mobile-tab {
+      flex-shrink: 0;
+      padding: 0.5rem 1.2rem;
+      border-radius: var(--radius-pill);
+      border: 2px solid var(--border);
+      background: var(--white);
+      color: var(--text-primary);
+      font-family: 'Lato', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      outline: none;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .mobile-tab:hover {
+      border-color: var(--orange);
+      color: var(--orange);
+    }
+    .mobile-tab.active {
+      background: var(--orange);
+      color: var(--white);
+      border-color: var(--orange);
+    }
+    .mobile-tab-logo {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      object-fit: contain;
+      background: var(--cream);
+    }
+    .mobile-tab-icon {
+      font-size: 0.95rem;
+      line-height: 1;
+    }
+
+    /* ═══════════ STATION HEADER ═══════════ */
+    .station-header {
+      padding: 2rem 0 0.5rem;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.5rem;
+    }
+    .station-header-left {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .station-title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 1.75rem;
+      color: var(--text-primary);
+    }
+    .station-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      padding-bottom: 1rem;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.2rem 0.7rem;
+      border-radius: var(--radius-pill);
+    }
+    .status-open { background: #ecfdf5; color: var(--open-green); }
+    .status-closed { background: #fef2f2; color: var(--closed-red); }
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+    .meta-location {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+    .meta-count {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
+
+    /* ═══════════ CATEGORY ═══════════ */
+    .category-section { margin-bottom: 2rem; }
+    .category-label {
+      font-size: 0.75rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--dark-green);
+      padding-bottom: 0.6rem;
+      border-bottom: 2px solid var(--dark-green);
+      margin-bottom: 1.25rem;
+    }
+
+    /* ═══════════ MENU GRID ═══════════ */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.25rem;
+      padding-bottom: 1rem;
+    }
+    .menu-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: box-shadow 0.25s ease, transform 0.25s ease;
+    }
+    .menu-card:hover {
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      transform: translateY(-2px);
+    }
+    .card-img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+    }
+    .card-img-placeholder {
+      width: 100%;
+      height: 200px;
+      background: linear-gradient(135deg, #f5f0e8 0%, #ebe4d8 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      opacity: 0.35;
+    }
+    .card-body {
+      padding: 0.85rem 1rem 1rem;
+    }
+    .card-name {
+      font-weight: 900;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      margin-bottom: 0.15rem;
+      line-height: 1.3;
+    }
+    .card-desc {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 0.5rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* Nutrition row */
+    .card-nutrition {
+      display: flex;
+      gap: 0;
+      margin-bottom: 0.6rem;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .nut-item {
+      text-align: center;
+      flex: 1;
+      padding: 0.45rem 0;
+    }
+    .nut-item + .nut-item { border-left: 1px solid var(--border); }
+    .nut-value {
+      font-weight: 900;
+      font-size: 0.9rem;
+      color: var(--text-primary);
+    }
+    .nut-label {
+      font-size: 0.6rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+    }
+    .tag {
+      display: inline-block;
+      padding: 0.15rem 0.55rem;
+      border-radius: var(--radius-pill);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    .tag-diet { background: var(--tag-green-bg); color: var(--tag-green-text); }
+    .tag-allergen { background: var(--tag-orange-bg); color: var(--tag-orange-text); }
+    .trending-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--orange);
+      background: var(--tag-orange-bg);
+      padding: 0.15rem 0.55rem;
+      border-radius: var(--radius-pill);
+    }
+
+    /* ═══════════ STATES ═══════════ */
+    .state-msg {
+      text-align: center;
+      padding: 5rem 2rem;
+    }
+    .state-msg p { color: var(--text-secondary); font-size: 0.95rem; }
+    .spinner {
+      width: 38px;
+      height: 38px;
+      border: 3px solid var(--border);
+      border-top-color: var(--orange);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .empty-icon { font-size: 2.5rem; margin-bottom: 0.5rem; opacity: 0.4; }
+
+    /* ═══════════ FOOTER ═══════════ */
+    .menu-footer {
+      background: var(--dark);
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      margin-top: 2rem;
+    }
+    .menu-footer p { font-size: 0.8rem; color: var(--text-on-dark-muted); }
+    .menu-footer a { color: var(--orange); text-decoration: none; }
+    .menu-footer a:hover { text-decoration: underline; }
+
+    /* ═══════════ ANIMATIONS ═══════════ */
+    .fade-in { animation: fadeUp 0.35s ease both; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ═══════════ RESPONSIVE ═══════════ */
+    @media (max-width: 768px) {
+      .hero { padding: 3rem 1.25rem 2.5rem; }
+      .menu-grid { grid-template-columns: 1fr; }
+      .card-img, .card-img-placeholder { height: 170px; }
+      .station-header { padding: 1.25rem 0 0.5rem; }
+      .station-title { font-size: 1.4rem; }
+    }
+
+    /* ═══════════ EMBED MODE ═══════════ */
+    body.embed-mode .hero { display: none; }
+    body.embed-mode .menu-footer { display: none; }
+    body.embed-mode { background: transparent; overflow: hidden; }
+    body.embed-mode .station-bar-mobile { position: relative; }
+    body.embed-mode .station-sidebar { position: relative; top: 0; }
+  </style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>See the Menu</h1>
+  <p>Scratch-made, fresh ingredients, prepared daily by our culinary team.</p>
+</div>
+
+<!-- MOBILE: horizontal tabs -->
+<div class="station-bar-mobile">
+  <div class="station-bar-mobile-inner" id="mobileTabs"></div>
+</div>
+
+<div class="main-layout">
+  <!-- DESKTOP: sidebar -->
+  <nav class="station-sidebar">
+    <div class="sidebar-nav" id="sidebarNav"></div>
+  </nav>
+
+  <!-- CONTENT -->
+  <div class="content-area">
+    <div id="stationHeader" style="display:none;"></div>
+    <div id="menuContent">
+      <div class="state-msg">
+        <div class="spinner"></div>
+        <p>Loading menus&hellip;</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="menu-footer">
+  <p>Menus updated daily &middot; Powered by <a href="https://genuinefoods.com" target="_blank" rel="noopener">Genuine Foods</a></p>
+</div>
+
+<script>
+  // ─── CONFIG ───────────────────────────────────────────
+  const SUPABASE_URL = 'https://lrclciudpwarqqtiwgxl.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxyY2xjaXVkcHdhcnFxdGl3Z3hsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyNDczNjUsImV4cCI6MjA5MDgyMzM2NX0.X3AEiowB4DuWAPgQwn1UQRJqmidh0PnCyCsI3EkBavo';
+
+  const TAG_LABELS = {
+    'V': 'Vegan', 'VG': 'Vegetarian', 'GF': 'Gluten-Free',
+    'DF': 'Dairy-Free', 'NF': 'Nut-Free', 'SF': 'Soy-Free',
+    'K': 'Kosher', 'H': 'Halal',
+  };
+
+  const DAYS = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
+
+  if (window.self !== window.top || new URLSearchParams(location.search).has('embed')) {
+    document.body.classList.add('embed-mode');
+  }
+
+  let stations = [];
+  let menuItems = [];
+
+  const $mobileTabs = document.getElementById('mobileTabs');
+  const $sidebarNav = document.getElementById('sidebarNav');
+  const $header     = document.getElementById('stationHeader');
+  const $content    = document.getElementById('menuContent');
+
+  async function supaFetch(table, query = '') {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${query}`, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+      }
+    });
+    if (!res.ok) throw new Error(`Failed to fetch ${table}: ${res.status}`);
+    return res.json();
+  }
+
+  async function init() {
+    try {
+      [stations, menuItems] = await Promise.all([
+        supaFetch('stations', 'select=*&is_active=eq.true&order=display_order.asc'),
+        supaFetch('menu_items', 'select=*&order=name.asc'),
+      ]);
+
+      if (!stations.length) {
+        $content.innerHTML = '<div class="state-msg"><div class="empty-icon">🍽</div><p>No dining locations found.</p></div>';
+        return;
+      }
+
+      renderMobileTabs();
+      renderSidebar();
+      selectStation(stations[0]);
+    } catch (err) {
+      console.error(err);
+      $content.innerHTML = '<div class="state-msg"><div class="empty-icon">⚠️</div><p>Couldn\'t load menus right now. Please try again later.</p></div>';
+    }
+  }
+
+  // ─── HOURS ────────────────────────────────────────────
+  function getOpenStatus(hours) {
+    if (!hours) return { open: false, text: 'Hours unavailable' };
+    const now = new Date();
+    const dayName = DAYS[now.getDay()];
+    const today = hours[dayName];
+    if (!today || today.closed) return { open: false, text: 'Closed today' };
+    const openTime = parseTime(today.open);
+    const closeTime = parseTime(today.close);
+    const nowMins = now.getHours() * 60 + now.getMinutes();
+    if (openTime !== null && closeTime !== null) {
+      if (nowMins >= openTime && nowMins < closeTime)
+        return { open: true, text: `Open · Closes ${today.close}` };
+      if (nowMins < openTime)
+        return { open: false, text: `Opens ${today.open}` };
+      return { open: false, text: `Closed · Was ${today.open}–${today.close}` };
+    }
+    return { open: false, text: 'Hours unavailable' };
+  }
+
+  function parseTime(str) {
+    if (!str) return null;
+    const m = str.match(/(\d+):(\d+)\s*(AM|PM)/i);
+    if (!m) return null;
+    let h = parseInt(m[1]);
+    const min = parseInt(m[2]);
+    if (m[3].toUpperCase() === 'PM' && h !== 12) h += 12;
+    if (m[3].toUpperCase() === 'AM' && h === 12) h = 0;
+    return h * 60 + min;
+  }
+
+  // ─── RENDER MOBILE TABS ───────────────────────────────
+  function renderMobileTabs() {
+    $mobileTabs.innerHTML = stations.map(s => {
+      const logoHtml = s.logo_url && s.logo_url.startsWith('http')
+        ? `<img class="mobile-tab-logo" src="${esc(s.logo_url)}" alt="">`
+        : `<span class="mobile-tab-icon">${esc(s.icon || '')}</span>`;
+      return `<button class="mobile-tab" data-id="${s.id}">${logoHtml}${esc(s.name)}</button>`;
+    }).join('');
+
+    $mobileTabs.addEventListener('click', e => {
+      const btn = e.target.closest('.mobile-tab');
+      if (!btn) return;
+      const s = stations.find(st => st.id === Number(btn.dataset.id));
+      if (s) selectStation(s);
+    });
+  }
+
+  // ─── RENDER SIDEBAR ───────────────────────────────────
+  function renderSidebar() {
+    $sidebarNav.innerHTML = stations.map(s => {
+      const logoHtml = s.logo_url && s.logo_url.startsWith('http')
+        ? `<img class="sidebar-logo" src="${esc(s.logo_url)}" alt="">`
+        : `<div class="sidebar-icon">${esc(s.icon || '🍽')}</div>`;
+      return `<button class="sidebar-item" data-id="${s.id}">${logoHtml}<span>${esc(s.name)}</span></button>`;
+    }).join('');
+
+    $sidebarNav.addEventListener('click', e => {
+      const btn = e.target.closest('.sidebar-item');
+      if (!btn) return;
+      const s = stations.find(st => st.id === Number(btn.dataset.id));
+      if (s) selectStation(s);
+    });
+  }
+
+  // ─── SELECT STATION ───────────────────────────────────
+  function selectStation(station) {
+    // Highlight both mobile + sidebar
+    $mobileTabs.querySelectorAll('.mobile-tab').forEach(t => {
+      t.classList.toggle('active', Number(t.dataset.id) === station.id);
+    });
+    $sidebarNav.querySelectorAll('.sidebar-item').forEach(t => {
+      t.classList.toggle('active', Number(t.dataset.id) === station.id);
+    });
+
+    const items = menuItems.filter(i => i.station_id === station.id);
+    const status = getOpenStatus(station.hours);
+
+    // Station header
+    $header.style.display = 'block';
+    $header.innerHTML = `
+      <div class="station-header fade-in">
+        <div class="station-header-left">
+          <h2 class="station-title">${esc(station.name)}</h2>
+        </div>
+        <span class="meta-count">${items.length} Item${items.length !== 1 ? 's' : ''}</span>
+      </div>
+      <div class="station-meta fade-in">
+        <span class="status-badge ${status.open ? 'status-open' : 'status-closed'}">
+          <span class="status-dot"></span>${esc(status.text)}
+        </span>
+        ${station.location ? `<span class="meta-location">📍 ${esc(station.location)}</span>` : ''}
+      </div>`;
+
+    if (!items.length) {
+      $content.innerHTML = '<div class="state-msg fade-in"><div class="empty-icon">📋</div><p>No menu items at ' + esc(station.name) + ' right now.</p></div>';
+      return;
+    }
+
+    // Group by category
+    const grouped = {};
+    items.forEach(item => {
+      const cat = item.category || 'Menu';
+      if (!grouped[cat]) grouped[cat] = [];
+      grouped[cat].push(item);
+    });
+
+    let html = '';
+    const cats = Object.keys(grouped).sort();
+    cats.forEach((cat, ci) => {
+      html += `<div class="category-section fade-in" style="animation-delay:${ci * 0.06}s">`;
+      if (cats.length > 1) html += `<div class="category-label">${esc(cat)}</div>`;
+      html += '<div class="menu-grid">';
+      grouped[cat].forEach((item, ii) => { html += renderCard(item, ci * 0.06 + ii * 0.03); });
+      html += '</div></div>';
+    });
+
+    $content.innerHTML = html;
+  }
+
+  // ─── RENDER CARD ──────────────────────────────────────
+  function renderCard(item, delay) {
+    const img = item.image_url
+      ? `<img class="card-img" src="${esc(item.image_url)}" alt="${esc(item.name)}" loading="lazy">`
+      : `<div class="card-img-placeholder">🍽</div>`;
+
+    let nutrition = '';
+    if (item.calories) {
+      nutrition = `<div class="card-nutrition">
+        <div class="nut-item"><div class="nut-value">${item.calories}</div><div class="nut-label">Cal</div></div>
+        ${item.protein != null ? `<div class="nut-item"><div class="nut-value">${item.protein}g</div><div class="nut-label">Protein</div></div>` : ''}
+        ${item.carbs != null ? `<div class="nut-item"><div class="nut-value">${item.carbs}g</div><div class="nut-label">Carbs</div></div>` : ''}
+        ${item.fat != null ? `<div class="nut-item"><div class="nut-value">${item.fat}g</div><div class="nut-label">Fat</div></div>` : ''}
+      </div>`;
+    }
+
+    let tags = '';
+    if (item.tags && item.tags.length)
+      item.tags.forEach(t => { tags += `<span class="tag tag-diet">${esc(TAG_LABELS[t] || t)}</span>`; });
+    if (item.allergens && item.allergens.length)
+      item.allergens.forEach(a => { tags += `<span class="tag tag-allergen">${esc(a)}</span>`; });
+
+    const trending = item.trending ? `<span class="trending-badge">🔥 Trending</span>` : '';
+
+    return `<div class="menu-card fade-in" style="animation-delay:${delay}s">
+      ${img}
+      <div class="card-body">
+        <div class="card-name">${esc(item.name)}</div>
+        ${item.description ? `<div class="card-desc">${esc(item.description)}</div>` : ''}
+        ${nutrition}
+        <div class="card-footer">${trending}${tags}</div>
+      </div>
+    </div>`;
+  }
+
+  function esc(str) {
+    if (!str) return '';
+    const d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
+
+  init();
+
+  // ─── AUTO-RESIZE IFRAME ─────────────────────────────
+  function sendHeight() {
+    const h = document.documentElement.scrollHeight;
+    window.parent.postMessage({ type: 'resize', height: h }, '*');
+  }
+  // Send height after load and on any resize/mutation
+  window.addEventListener('load', () => setTimeout(sendHeight, 500));
+  window.addEventListener('resize', sendHeight);
+  const resizeObserver = new ResizeObserver(sendHeight);
+  resizeObserver.observe(document.body);
+</script>
+
+</body>
+</html>

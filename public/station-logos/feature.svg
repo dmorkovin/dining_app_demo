@@ -1,0 +1,18 @@
+<svg viewBox="0 0 300 120" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .station-name { fill: #d4a574; font-family: 'Arial Black', sans-serif; font-weight: 900; font-size: 52px; }
+      .tagline { fill: #6d4c41; font-family: Arial, sans-serif; font-size: 12px; font-weight: 600; }
+      .chef-hat { fill: #d4a574; }
+    </style>
+  </defs>
+
+  <!-- Chef hat icon in the A -->
+  <path class="chef-hat" d="M155,25 Q155,20 160,20 Q165,20 165,25 L165,35 L155,35 Z M157,35 L163,35 L163,38 L157,38 Z" />
+
+  <!-- FEATURE text -->
+  <text x="10" y="65" class="station-name">FEATURE</text>
+
+  <!-- Tagline -->
+  <text x="10" y="85" class="tagline">CHEF'S SELECTION</text>
+</svg>

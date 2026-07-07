@@ -1,0 +1,18 @@
+<svg viewBox="0 0 300 120" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .station-name { fill: #4e2a1e; font-family: 'Arial Black', sans-serif; font-weight: 900; font-size: 52px; }
+      .tagline { fill: #8d6e63; font-family: Arial, sans-serif; font-size: 12px; font-weight: 600; }
+      .flame { fill: #d84315; }
+    </style>
+  </defs>
+
+  <!-- Flame icon in the A -->
+  <path class="flame" d="M100,30 Q105,25 105,35 Q105,30 110,35 Q110,40 105,45 Q100,40 100,35 Q100,32 100,30 Z" />
+
+  <!-- HEARTH text -->
+  <text x="10" y="65" class="station-name">HEARTH</text>
+
+  <!-- Tagline -->
+  <text x="10" y="85" class="tagline">WOOD-FIRED PIZZA</text>
+</svg>
