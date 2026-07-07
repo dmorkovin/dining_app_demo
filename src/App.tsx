@@ -22,6 +22,7 @@ import AuthScreen from './components/auth/AuthScreen';
 import ResetPasswordScreen from './components/auth/ResetPasswordScreen';
 import OnboardingFlow from './components/auth/OnboardingFlow';
 import { LanguageOnboarding } from './components/LanguageOnboarding';
+import { DEMO_MODE, DEMO_USER_ID } from './lib/demoMode';
 import type { Database } from './lib/database.types';
 
 type Staff = Database['public']['Tables']['staff']['Row'];
@@ -66,6 +67,12 @@ function AppContent() {
 
   useEffect(() => {
     if (languageCheckDone) return;
+    if (DEMO_MODE) {
+      localStorage.setItem('app-language', 'en');
+      setLanguageSelected(true);
+      setLanguageCheckDone(true);
+      return;
+    }
     if (loading) return;
     if (session?.user?.id) {
       localStorage.setItem('app-language', 'en');
@@ -76,13 +83,15 @@ function AppContent() {
     }
   }, [loading, session?.user?.id, languageCheckDone]);
 
+  const activeUserId = DEMO_MODE ? DEMO_USER_ID : (session?.user?.id ?? '');
+
   useEffect(() => {
-    if (!session?.user?.id) return;
+    if (!activeUserId) return;
     const fetchAvatar = async () => {
       const { data } = await supabase
         .from('users')
         .select('name, profile_image_url')
-        .eq('id', session.user.id)
+        .eq('id', activeUserId)
         .maybeSingle();
       if (data) {
         setHeaderUserName(data.name);
@@ -94,7 +103,7 @@ function AppContent() {
       }
     };
     fetchAvatar();
-  }, [session?.user?.id]);
+  }, [activeUserId]);
 
   useEffect(() => {
     const loadStations = async () => {
@@ -139,11 +148,11 @@ function AppContent() {
   };
 
   const checkUnreadNotifications = async () => {
-    if (!session) return;
+    if (!activeUserId) return;
     const { data } = await supabase
       .from('notifications')
       .select('id')
-      .eq('user_id', session.user.id)
+      .eq('user_id', activeUserId)
       .eq('unread', true)
       .limit(1);
 
@@ -151,7 +160,7 @@ function AppContent() {
   };
 
   useEffect(() => {
-    if (!session) return;
+    if (!activeUserId) return;
     checkUnreadNotifications();
     const subscription = supabase
       .channel('notifications')
@@ -161,7 +170,7 @@ function AppContent() {
           event: '*',
           schema: 'public',
           table: 'notifications',
-          filter: `user_id=eq.${session.user.id}`,
+          filter: `user_id=eq.${activeUserId}`,
         },
         () => {
           checkUnreadNotifications();
@@ -172,19 +181,19 @@ function AppContent() {
     return () => {
       subscription.unsubscribe();
     };
-  }, [session?.user.id]);
+  }, [activeUserId]);
 
   useEffect(() => {
-    if (!session?.user?.id) return;
+    if (!activeUserId || DEMO_MODE) return;
     supabase
       .from('users')
       .select('onboarding_completed, name')
-      .eq('id', session.user.id)
+      .eq('id', activeUserId)
       .single()
       .then(({ data }) => {
         setOnboardingComplete(data?.onboarding_completed ?? false);
       });
-    ensureLoyaltyAccount(session.user.id);
+    ensureLoyaltyAccount(activeUserId);
   }, [session]);
 
   const handleSendSmile = (staff: Staff) => {
@@ -210,7 +219,7 @@ function AppContent() {
     return <LanguageOnboarding onComplete={() => setLanguageSelected(true)} />;
   }
 
-  if (loading) {
+  if (!DEMO_MODE && loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F7F8FA]">
         <div className="text-center">
@@ -229,11 +238,11 @@ function AppContent() {
     return <ResetPasswordScreen />;
   }
 
-  if (!session) {
+  if (!DEMO_MODE && !session) {
     return <AuthScreen />;
   }
 
-  if (session && onboardingComplete === null) {
+  if (!DEMO_MODE && session && onboardingComplete === null) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F7F8FA]">
         <div className="text-gray-400 text-sm">
@@ -243,7 +252,7 @@ function AppContent() {
     );
   }
 
-  if (session && onboardingComplete === false) {
+  if (!DEMO_MODE && session && onboardingComplete === false) {
     return (
       <OnboardingFlow
         userId={session.user.id}
@@ -304,7 +313,7 @@ function AppContent() {
           <div className="flex-1 lg:min-h-screen lg:bg-white lg:rounded-[14px] lg:shadow-sm lg:max-w-2xl lg:px-6" style={{ position: 'relative', height: 'calc(100dvh - 50px - 49px - env(safe-area-inset-top) - env(safe-area-inset-bottom))', marginTop: 'calc(50px + env(safe-area-inset-top))', marginBottom: 'calc(49px + env(safe-area-inset-bottom))', overflow: 'hidden' }}>
             {activeTab === 'home' && (
               <HomeTab
-                userId={session.user.id}
+                userId={activeUserId}
                 onTabChange={setActiveTab}
                 onStationSelect={handleStationSelectFromHome}
                 onStationRequest={handleStationSelectFromHome}
@@ -312,7 +321,7 @@ function AppContent() {
             )}
             {activeTab === 'order' && (
               <OrderTab
-                userId={session.user.id}
+                userId={activeUserId}
                 onTabChange={setActiveTab}
                 initialStationId={selectedStationId}
                 initialItemId={pendingItemId}
@@ -326,13 +335,13 @@ function AppContent() {
               />
             )}
             {activeTab === 'rewards' && (
-              <RewardsTab userId={session.user.id} />
+              <RewardsTab userId={activeUserId} />
             )}
             {activeTab === 'discover' && (
-              <VoteTab userId={session.user.id} onSendSmile={handleSendSmile} />
+              <VoteTab userId={activeUserId} onSendSmile={handleSendSmile} />
             )}
             {activeTab === 'profile' && (
-              <MoreTab userId={session.user.id} onSendSmile={handleSendSmile} />
+              <MoreTab userId={activeUserId} onSendSmile={handleSendSmile} />
             )}
           </div>
 
@@ -366,13 +375,13 @@ function AppContent() {
         <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
 
         <ProfileDrawer
-          userId={session.user.id}
+          userId={activeUserId}
           isOpen={isProfileOpen}
           onClose={() => setIsProfileOpen(false)}
         />
 
         <NotificationPanel
-          userId={session.user.id}
+          userId={activeUserId}
           isOpen={isNotificationOpen}
           onClose={() => {
             setIsNotificationOpen(false);
@@ -381,7 +390,7 @@ function AppContent() {
         />
 
         <SendSmileModal
-          userId={session.user.id}
+          userId={activeUserId}
           isOpen={sendSmileModalOpen}
           staff={selectedStaff}
           onClose={() => {
