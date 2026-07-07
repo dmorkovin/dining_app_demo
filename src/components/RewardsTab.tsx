@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Coffee, ChefHat, Gift, TrendingUp, TrendingDown } from 'lucide-react';
+import { Coffee, ChefHat, Gift, TrendingUp, TrendingDown, X, CreditCard, Bell, Sparkles } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { DEMO_MODE } from '../lib/demoMode';
 import { WelcomeWeekCard } from './WelcomeWeekCard';
@@ -39,7 +39,8 @@ export function RewardsTab({ userId }: RewardsTabProps) {
   const [coffeeCount, setCoffeeCount] = useState(0);
   const [catalog, setCatalog] = useState<RewardsCatalogItem[]>([]);
   const [transactions, setTransactions] = useState<LoyaltyTransaction[]>([]);
-  const [toastMessage, setToastMessage] = useState('');
+  const [redeemedItem, setRedeemedItem] = useState<RewardsCatalogItem | null>(null);
+  const [pendingRewards, setPendingRewards] = useState<RewardsCatalogItem[]>([]);
   const [redeeming, setRedeeming] = useState<string | null>(null);
   const [welcomeStationsVisited, setWelcomeStationsVisited] = useState<number[]>([]);
   const [foundingFalconBadge, setFoundingFalconBadge] = useState(false);
@@ -144,9 +145,10 @@ export function RewardsTab({ userId }: RewardsTabProps) {
   const handleRedeem = async (rewardId: string) => {
     const item = catalog.find((c) => c.id === rewardId);
     if (DEMO_MODE) {
-      if (item) setBalance((b) => b - item.point_cost);
-      setToastMessage(t('redeemSuccess'));
-      setTimeout(() => setToastMessage(''), 3000);
+      if (item) {
+        setBalance((b) => b - item.point_cost);
+        setRedeemedItem(item);
+      }
       return;
     }
     setRedeeming(rewardId);
@@ -156,10 +158,20 @@ export function RewardsTab({ userId }: RewardsTabProps) {
     });
     setRedeeming(null);
     if (error || (data && data.status === 'error')) return;
-    setToastMessage(t('redeemSuccess'));
+    if (item) setRedeemedItem(item);
     fetchAccount();
     fetchTransactions();
-    setTimeout(() => setToastMessage(''), 3000);
+    supabase.from('notifications').insert({
+      user_id: userId,
+      from_name: 'Rewards',
+      message: `Your ${i18n.language === 'es' ? item?.name_es : item?.name_en} is ready! Show your meal card at the counter to collect.`,
+      unread: true,
+    }).then(() => {});
+  };
+
+  const handleDismissRedeemed = () => {
+    if (redeemedItem) setPendingRewards((prev) => [redeemedItem, ...prev]);
+    setRedeemedItem(null);
   };
 
   const progressPercent = Math.min((balance / FREE_ENTREE_THRESHOLD) * 100, 100);
@@ -215,6 +227,38 @@ export function RewardsTab({ userId }: RewardsTabProps) {
 
   return (
    <div className="px-5 lg:px-6 pt-6 pb-8" style={{ position: 'relative', overflowY: 'auto', overscrollBehavior: 'contain', height: '100%' }}>
+
+      {/* Pending rewards notification banner */}
+      {pendingRewards.length > 0 && (
+        <div className="mb-5 space-y-2">
+          {pendingRewards.map((pr, i) => {
+            const PrIcon = getRewardIcon(pr.reward_type);
+            const prName = i18n.language === 'es' ? pr.name_es : pr.name_en;
+            return (
+              <div key={i} className="flex items-center gap-3 bg-amber-50 border border-amber-300 rounded-2xl px-4 py-3 shadow-sm animate-fadeIn">
+                <div className="w-9 h-9 rounded-full bg-amber-200 flex items-center justify-center flex-shrink-0">
+                  <Bell className="w-4 h-4 text-amber-700" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-amber-900 truncate">Free item pending: {prName}</p>
+                  <p className="text-xs text-amber-700 mt-0.5 flex items-center gap-1">
+                    <CreditCard className="w-3 h-3 flex-shrink-0" />
+                    Show at the counter or add to your meal card to collect
+                  </p>
+                </div>
+                <button
+                  onClick={() => setPendingRewards((prev) => prev.filter((_, j) => j !== i))}
+                  className="text-amber-400 hover:text-amber-600 flex-shrink-0 ml-1"
+                  aria-label="Dismiss"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
       {/* Points Balance Card */}
       <div
         className="rounded-[14px] p-6 card-shadow-lg mb-4 relative overflow-hidden"
@@ -415,12 +459,73 @@ export function RewardsTab({ userId }: RewardsTabProps) {
         </div>
       </div>
 
-      {/* Toast */}
-      {toastMessage && (
-        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-sm font-medium px-5 py-3 rounded-full shadow-lg z-50 animate-fade-in">
-          {toastMessage}
-        </div>
-      )}
+      {/* Redemption success modal */}
+      {redeemedItem && (() => {
+        const ModalIcon = getRewardIcon(redeemedItem.reward_type);
+        const rewardName = i18n.language === 'es' ? redeemedItem.name_es : redeemedItem.name_en;
+        const rewardDesc = i18n.language === 'es' ? (redeemedItem.description_es || '') : (redeemedItem.description_en || '');
+        return (
+          <div className="fixed inset-0 z-[90] flex items-end justify-center" role="dialog" aria-modal="true">
+            <div
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fadeIn"
+              onClick={handleDismissRedeemed}
+            />
+            <div className="relative w-full max-w-[430px] bg-white rounded-t-3xl shadow-2xl flex flex-col sheet-enter"
+              style={{ paddingBottom: 'calc(24px + env(safe-area-inset-bottom))' }}>
+
+              {/* Drag handle */}
+              <div className="pt-3 pb-1 flex justify-center">
+                <div className="w-10 h-1.5 bg-gray-300 rounded-full" />
+              </div>
+
+              {/* Celebration header */}
+              <div className="px-6 pt-4 pb-6 text-center">
+                <div className="relative inline-flex mb-5">
+                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center shadow-xl">
+                    <ModalIcon className="w-11 h-11 text-white" strokeWidth={1.8} />
+                  </div>
+                  <div className="absolute -top-1 -right-1 w-8 h-8 rounded-full bg-green-500 flex items-center justify-center shadow-md border-2 border-white">
+                    <Sparkles className="w-4 h-4 text-white" strokeWidth={2} />
+                  </div>
+                </div>
+                <h2 className="text-2xl font-bold text-[var(--color-navy)]">Reward Redeemed!</h2>
+                <p className="text-gray-500 text-sm mt-1">Your free item is waiting for you</p>
+              </div>
+
+              {/* Reward detail card */}
+              <div className="mx-6 mb-4 bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-200 rounded-2xl p-4 flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
+                  <ModalIcon className="w-6 h-6 text-orange-600" strokeWidth={1.8} />
+                </div>
+                <div className="min-w-0">
+                  <p className="font-bold text-[var(--color-navy)] truncate">{rewardName}</p>
+                  {rewardDesc && <p className="text-sm text-gray-500 mt-0.5 leading-snug">{rewardDesc}</p>}
+                </div>
+              </div>
+
+              {/* Instruction banner */}
+              <div className="mx-6 mb-6 bg-blue-50 border border-blue-200 rounded-2xl px-4 py-3 flex items-start gap-3">
+                <CreditCard className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" strokeWidth={2} />
+                <div>
+                  <p className="text-sm font-semibold text-blue-900">Add to your meal card to collect</p>
+                  <p className="text-xs text-blue-700 mt-0.5 leading-relaxed">
+                    Show this at the dining counter or scan your meal card. Your reward will be applied automatically.
+                  </p>
+                </div>
+              </div>
+
+              <div className="px-6">
+                <button
+                  onClick={handleDismissRedeemed}
+                  className="w-full h-14 rounded-2xl bg-[var(--color-orange,#FF6B35)] text-white font-semibold text-base shadow-md hover:brightness-110 active:scale-[0.98] transition-all"
+                >
+                  Got it — add to my card
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }
