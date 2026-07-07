@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { X, CheckCircle, AlertCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { DEMO_MODE } from '../lib/demoMode';
 import type { Database } from '../lib/database.types';
 
 type Staff = Database['public']['Tables']['staff']['Row'];
@@ -24,6 +25,18 @@ export function SendSmileModal({ userId, isOpen, staff, onClose }: SendSmileModa
     if (!staff || sending) return;
     setSending(true);
     setError(null);
+
+    if (DEMO_MODE) {
+      setMessage('');
+      setSending(false);
+      setSuccess(true);
+      setTimeout(() => {
+        setSuccess(false);
+        onClose();
+      }, 2000);
+      return;
+    }
+
     const { error: smileError } = await supabase
       .from('smiles_sent')
       .insert({

@@ -16,6 +16,7 @@ import {
   Clock,
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { DEMO_MODE } from '../lib/demoMode';
 import { ensureLoyaltyAccount } from '../lib/ensureLoyaltyAccount';
 import { isStationOpen } from '../lib/stationHours';
 import { normalizeAllergen, formatAllergenDisplay, SUPPRESSED_TAGS } from '../lib/allergens';
@@ -363,6 +364,27 @@ export function OrderTab({ userId, onTabChange, initialStationId, initialItemId,
       setIsPlacingOrder(false);
       return;
     }
+
+    if (DEMO_MODE) {
+      const orderNumber =
+        'GD-' +
+        Math.floor(Math.random() * 999 + 1)
+          .toString()
+          .padStart(3, '0');
+      setConfirmedStationName(selectedStationData?.name || '');
+      setConfirmedItems(cart);
+      setConfirmedOrderNumber(orderNumber);
+      setConfirmedOrderId('demo-order-id');
+      setEarnResult({ pointsEarned: 85, newBalance: 450, multiplier: 1, isFirstOrder: false });
+      haptic.success();
+      setOrderConfirmed(true);
+      setCart([]);
+      setCartTimestamp(null);
+      setIsCartOpen(false);
+      setIsPlacingOrder(false);
+      return;
+    }
+
     try {
       const orderNumber =
         'GD-' +

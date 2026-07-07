@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronUp, Send, Heart, X, TrendingUp, Flame, Wheat, Smile, User } from 'lucide-react';
 import { supabase, DEMO_SEED_USER_ID } from '../lib/supabase';
+import { DEMO_MODE } from '../lib/demoMode';
 import { formatAllergenDisplay, SUPPRESSED_TAGS } from '../lib/allergens';
 import type { Database } from '../lib/database.types';
 import { haptic } from '../utils/haptics';
@@ -151,11 +152,13 @@ export function VoteTab({ userId, onSendSmile }: VoteTabProps) {
     const currentItem = menuItems[currentIndex];
     if (!currentItem) return;
 
-    await supabase.from('user_swipes').insert({
-      user_id: userId,
-      menu_item_id: currentItem.id,
-      action,
-    });
+    if (!DEMO_MODE) {
+      await supabase.from('user_swipes').insert({
+        user_id: userId,
+        menu_item_id: currentItem.id,
+        action,
+      });
+    }
 
     if (action === 'liked') {
       setLikedItems([...likedItems, currentItem]);
@@ -208,6 +211,23 @@ export function VoteTab({ userId, onSendSmile }: VoteTabProps) {
     const entry = polls.find((p) => p.poll.id === pollId);
     if (!entry || entry.userVote) return;
 
+    if (DEMO_MODE) {
+      setPolls((prev) =>
+        prev.map((p) =>
+          p.poll.id === pollId
+            ? {
+                ...p,
+                userVote: optionId,
+                options: p.options.map((o) =>
+                  o.id === optionId ? { ...o, vote_count: (o.vote_count ?? 0) + 1 } : o
+                ),
+              }
+            : p
+        )
+      );
+      return;
+    }
+
     const { error: voteError } = await supabase.from('user_votes').insert({
       user_id: userId,
       poll_id: pollId,
@@ -225,6 +245,20 @@ export function VoteTab({ userId, onSendSmile }: VoteTabProps) {
 
   const handleSubmitTheme = async () => {
     if (!newTheme.trim()) return;
+
+    if (DEMO_MODE) {
+      const demoProposal = {
+        id: `demo-${Date.now()}`,
+        user_id: userId,
+        text: newTheme.trim(),
+        author_name: 'You',
+        vote_count: 0,
+        created_at: new Date().toISOString(),
+      } as ThemeProposal;
+      setThemeProposals((prev) => [demoProposal, ...prev]);
+      setNewTheme('');
+      return;
+    }
 
     const { data: userData } = await supabase
       .from('users')
@@ -246,6 +280,19 @@ export function VoteTab({ userId, onSendSmile }: VoteTabProps) {
 
   const handleUpvoteTheme = async (themeId: string) => {
     if (upvotedThemes.has(themeId)) return;
+
+    if (DEMO_MODE) {
+      setThemeProposals((prev) =>
+        prev
+          .map((tp) =>
+            tp.id === themeId ? { ...tp, vote_count: (tp.vote_count ?? 0) + 1 } : tp
+          )
+          .sort((a, b) => (b.vote_count ?? 0) - (a.vote_count ?? 0))
+      );
+      setUpvotedThemes(new Set([...upvotedThemes, themeId]));
+      return;
+    }
+
     const { error: upvoteError } = await supabase.from('theme_upvotes').insert({
       user_id: userId,
       theme_id: themeId,

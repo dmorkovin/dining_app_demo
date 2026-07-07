@@ -8,3 +8,7 @@ export async function getCurrentUserId(): Promise<string | null> {
   const { data } = await supabase.auth.getUser();
   return data.user?.id ?? null;
 }
+
+export function demoStub<T>(fake: T): Promise<{ data: T; error: null }> {
+  return Promise.resolve({ data: fake, error: null });
+}

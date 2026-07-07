@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { User, LogOut, Check, ChevronRight, Camera, MessageSquare } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
+import { DEMO_MODE } from '../lib/demoMode';
 import { getAvatarUrl } from '../lib/avatarUrl';
 import { useAuth } from '../lib/AuthContext';
 import { haptic } from '../utils/haptics';
@@ -116,6 +117,7 @@ export function ProfileTab({ userId }: ProfileTabProps) {
       : [...dietaryPreferences, pref];
     const previous = dietaryPreferences;
     setDietaryPreferences(updated);
+    if (DEMO_MODE) return;
     const { error } = await supabase
       .from('users')
       .update({ dietary_preference: updated.join(', ') })
@@ -141,6 +143,7 @@ export function ProfileTab({ userId }: ProfileTabProps) {
       ? alerts.filter((a) => a !== allergen)
       : [...alerts, allergen];
     setAlerts(newAlerts);
+    if (DEMO_MODE) return;
     const { error } = await supabase
       .from('users')
       .update({ dietary_alerts: newAlerts })
@@ -155,6 +158,7 @@ export function ProfileTab({ userId }: ProfileTabProps) {
     const previous = hideAllergenItems;
     const newValue = !previous;
     setHideAllergenItems(newValue);
+    if (DEMO_MODE) return;
     const { error } = await supabase
       .from('users')
       .update({ hide_allergen_items: newValue })
@@ -169,6 +173,10 @@ export function ProfileTab({ userId }: ProfileTabProps) {
     haptic.error();
     setDeleteLoading(true);
     setDeleteError(null);
+    if (DEMO_MODE) {
+      await signOut();
+      return;
+    }
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const uid = session?.user?.id ?? userId;

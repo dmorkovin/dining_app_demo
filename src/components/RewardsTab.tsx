@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Coffee, ChefHat, Gift, TrendingUp, TrendingDown } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { DEMO_MODE } from '../lib/demoMode';
 import { WelcomeWeekCard } from './WelcomeWeekCard';
 import { PlanRecommendationCard } from './PlanRecommendationCard';
 
@@ -141,6 +142,13 @@ export function RewardsTab({ userId }: RewardsTabProps) {
   };
 
   const handleRedeem = async (rewardId: string) => {
+    const item = catalog.find((c) => c.id === rewardId);
+    if (DEMO_MODE) {
+      if (item) setBalance((b) => b - item.point_cost);
+      setToastMessage(t('redeemSuccess'));
+      setTimeout(() => setToastMessage(''), 3000);
+      return;
+    }
     setRedeeming(rewardId);
     const { data, error } = await supabase.rpc('redeem_reward', {
       p_user_id: userId,

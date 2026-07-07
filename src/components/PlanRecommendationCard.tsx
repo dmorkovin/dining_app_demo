@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
+import { DEMO_MODE } from '../lib/demoMode';
 import { PlanDetailModal } from './PlanDetailModal';
 
 interface PlanRecommendationCardProps {
@@ -18,6 +19,7 @@ export function PlanRecommendationCard({ userId, planCardData, dismissed, onDism
   if (dismissed) return null;
 
   const logPlanCardEvent = async (eventType: string) => {
+    if (DEMO_MODE) return;
     try {
       await supabase.from('plan_conversion_events').insert({
         user_id: userId,
@@ -93,7 +95,9 @@ export function PlanRecommendationCard({ userId, planCardData, dismissed, onDism
             onClick={() => {
               logPlanCardEvent('card_dismissed');
               onDismiss();
-              supabase.from('loyalty_accounts').update({ plan_conversion_card_dismissed_at: new Date().toISOString() }).eq('user_id', userId).then(() => {});
+              if (!DEMO_MODE) {
+                supabase.from('loyalty_accounts').update({ plan_conversion_card_dismissed_at: new Date().toISOString() }).eq('user_id', userId).then(() => {});
+              }
             }}
             className="flex-1 h-10 rounded-xl bg-white text-gray-600 text-sm font-medium border border-gray-200 hover:bg-gray-50 active:scale-[0.97] transition-all"
           >
